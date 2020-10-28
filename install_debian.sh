@@ -3,7 +3,7 @@
 #
 #          FILE: install_debian.sh
 #
-#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY]
+#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY] [-s] [-m] [-n] [-h]
 #
 #   DESCRIPTION: Compile and install `st` on Ubuntu/Debian-flavoured distros.
 #
