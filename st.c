@@ -909,7 +909,7 @@ void ttywriteraw(const char *s, size_t n) {
              * for a serial line. Bigger values might clog the I/O.
              */
             if ((r = write(cmdfd, s, (n < lim)? n : lim)) < 0) {
-                goto _TTYWRITERAW_WRITE_ERROR;
+                goto write_error;
             }
             if (r < n) {
                 /*
@@ -933,7 +933,7 @@ void ttywriteraw(const char *s, size_t n) {
     }
     return;
 
-    _TTYWRITERAW_WRITE_ERROR:
+    write_error:
         die("write error on tty: %s\n", strerror(errno));
 }
 
@@ -2476,82 +2476,82 @@ void tputc(Rune u) {
         return;
     }
 
-check_control_code:
-    /*
-     * Actions of control codes must be performed as soon they arrive
-     * because they can be embedded inside a control sequence, and
-     * they must not cause conflicts with sequences.
-     */
-    if (control) {
-        tcontrolcode(u);
+    check_control_code:
         /*
-         * control codes are not shown ever
+         * Actions of control codes must be performed as soon they arrive
+         * because they can be embedded inside a control sequence, and
+         * they must not cause conflicts with sequences.
          */
-        return;
-    } else if (term.esc & ESC_START) {
-        if (term.esc & ESC_CSI) {
-            csiescseq.buf[csiescseq.len++] = u;
-            if (BETWEEN(u, 0x40, 0x7E)
-                    || csiescseq.len >= \
-                    sizeof(csiescseq.buf)-1) {
-                term.esc = 0;
-                csiparse();
-                csihandle();
-            }
+        if (control) {
+            tcontrolcode(u);
+            /*
+             * control codes are not shown ever
+             */
             return;
-        } else if (term.esc & ESC_UTF8) {
-            tdefutf8(u);
-        } else if (term.esc & ESC_ALTCHARSET) {
-            tdeftran(u);
-        } else if (term.esc & ESC_TEST) {
-            tdectest(u);
-        } else {
-            if (!eschandle(u)) {
-                // Sequence already finished
+        } else if (term.esc & ESC_START) {
+            if (term.esc & ESC_CSI) {
+                csiescseq.buf[csiescseq.len++] = u;
+                if (BETWEEN(u, 0x40, 0x7E)
+                        || csiescseq.len >= \
+                        sizeof(csiescseq.buf)-1) {
+                    term.esc = 0;
+                    csiparse();
+                    csihandle();
+                }
                 return;
+            } else if (term.esc & ESC_UTF8) {
+                tdefutf8(u);
+            } else if (term.esc & ESC_ALTCHARSET) {
+                tdeftran(u);
+            } else if (term.esc & ESC_TEST) {
+                tdectest(u);
+            } else {
+                if (!eschandle(u)) {
+                    // Sequence already finished
+                    return;
+                }
+            }
+            term.esc = 0;
+            /*
+             * All characters which form part of a sequence are not
+             * printed
+             */
+            return;
+        }
+        if (sel.ob.x != -1 && BETWEEN(term.c.y, sel.ob.y, sel.oe.y)) {
+            selclear();
+        }
+
+        gp = &term.line[term.c.y][term.c.x];
+        if (IS_SET(MODE_WRAP) && (term.c.state & CURSOR_WRAPNEXT)) {
+            gp->mode |= ATTR_WRAP;
+            tnewline(1);
+            gp = &term.line[term.c.y][term.c.x];
+        }
+
+        if (IS_SET(MODE_INSERT) && term.c.x+width < term.col) {
+            memmove(gp+width, gp, (term.col - term.c.x - width) * sizeof(Glyph));
+        }
+
+        if (term.c.x+width > term.col) {
+            tnewline(1);
+            gp = &term.line[term.c.y][term.c.x];
+        }
+
+        tsetchar(u, &term.c.attr, term.c.x, term.c.y);
+
+        if (width == 2) {
+            gp->mode |= ATTR_WIDE;
+            if (term.c.x+1 < term.col) {
+                gp[1].u = '\0';
+                gp[1].mode = ATTR_WDUMMY;
             }
         }
-        term.esc = 0;
-        /*
-         * All characters which form part of a sequence are not
-         * printed
-         */
-        return;
-    }
-    if (sel.ob.x != -1 && BETWEEN(term.c.y, sel.ob.y, sel.oe.y)) {
-        selclear();
-    }
-
-    gp = &term.line[term.c.y][term.c.x];
-    if (IS_SET(MODE_WRAP) && (term.c.state & CURSOR_WRAPNEXT)) {
-        gp->mode |= ATTR_WRAP;
-        tnewline(1);
-        gp = &term.line[term.c.y][term.c.x];
-    }
-
-    if (IS_SET(MODE_INSERT) && term.c.x+width < term.col) {
-        memmove(gp+width, gp, (term.col - term.c.x - width) * sizeof(Glyph));
-    }
-
-    if (term.c.x+width > term.col) {
-        tnewline(1);
-        gp = &term.line[term.c.y][term.c.x];
-    }
-
-    tsetchar(u, &term.c.attr, term.c.x, term.c.y);
-
-    if (width == 2) {
-        gp->mode |= ATTR_WIDE;
-        if (term.c.x+1 < term.col) {
-            gp[1].u = '\0';
-            gp[1].mode = ATTR_WDUMMY;
+        if (term.c.x+width < term.col) {
+            tmoveto(term.c.x+width, term.c.y);
+        } else {
+            term.c.state |= CURSOR_WRAPNEXT;
         }
-    }
-    if (term.c.x+width < term.col) {
-        tmoveto(term.c.x+width, term.c.y);
-    } else {
-        term.c.state |= CURSOR_WRAPNEXT;
-    }
 }
 
 int twrite(const char *buf, int buflen, int show_ctrl) {
