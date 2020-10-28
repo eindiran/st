@@ -75,21 +75,22 @@ while getopts "d:smnh" o; do
     esac
 done
 
-# Install required packages for build with apt-get:
-printf "Installing HarfBuzz dependencies\n"
-if ${USE_MESON}; then
-    printf "Using meson toolchain to build HarfBuzz\n"
-    sudo apt-get install -y meson ragel
-else
-    printf "Using autoconf/automake toolchain to build HarfBuzz\n"
-    sudo apt-get install -y autoconf automake
-fi
-sudo apt-get install -y libtool gtk-doc-tools gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev
+# Install explicit st dependencies:
 printf "Installing st dependencies\n"
-sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config
+sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1
 
 if "${BUILD_HARFBUZZ}"; then
     (
+        # Install HarfBuzz dependencies:
+        printf "Installing HarfBuzz dependencies\n"
+        if ${USE_MESON}; then
+            printf "Using meson toolchain to build HarfBuzz\n"
+            sudo apt-get install -y meson ragel
+        else
+            printf "Using autoconf/automake toolchain to build HarfBuzz\n"
+            sudo apt-get install -y autoconf automake
+        fi
+        sudo apt-get install -y libtool gtk-doc-tools gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev
         # Build HarfBuzz in a subshell to avoid needing pushd/popd/cd
         if [ -n "${HARFBUZZ_DIR}" ]; then
             printf "Using directory %s to build harfbuzz\n" "${HARFBUZZ_DIR}"
@@ -132,6 +133,7 @@ fi
 
 printf "All st dependencies are installed!\n"
 printf "Compiling st...\n"
+make clean
 make || printerr "Compilation of st failed!\n"
 sudo make install || printerr "Installation of st failed!\n"
 chmod a+x ./st
