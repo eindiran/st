@@ -1634,6 +1634,8 @@ void tsetmode(int priv, int set, int *args, int narg) {
             case 20: /* LNM -- Linefeed/new line */
                 MODBIT(term.mode, set, MODE_CRLF);
                 break;
+            case 34: /* DECRLM -- Cursor left-to-right (IGNORED) */
+                break;
             default:
                 fprintf(stderr,
                         "erresc: unknown set/reset mode %d\n",
