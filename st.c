@@ -1537,6 +1537,7 @@ void tsetmode(int priv, int set, int *args, int narg) {
             case 8:  /* DECARM -- Auto repeat (IGNORED) */
             case 18: /* DECPFF -- Printer feed (IGNORED) */
             case 19: /* DECPEX -- Printer extent (IGNORED) */
+            case 34: /* DECRLM -- Cursor left-to-right (IGNORED) */
             case 42: /* DECNRCM -- National characters (IGNORED) */
             case 12: /* att610 -- Start blinking cursor (IGNORED) */
                 break;
