@@ -75,9 +75,12 @@ while getopts "d:smnh" o; do
     esac
 done
 
+printf "Copying config.debian-linux.mk to config.mk\n"
+cp -a config.debian-linux.mk config.mk
+
 # Install explicit st dependencies:
 printf "Installing st dependencies\n"
-sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1
+sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1 libfreetype6-dev
 
 if "${BUILD_HARFBUZZ}"; then
     (
@@ -90,7 +93,7 @@ if "${BUILD_HARFBUZZ}"; then
             printf "Using autoconf/automake toolchain to build HarfBuzz\n"
             sudo apt-get install -y autoconf automake
         fi
-        sudo apt-get install -y libtool gtk-doc-tools gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev
+        sudo apt-get install -y libtool gtk-doc-tools gcc g++ libglib2.0-dev libcairo2-dev
         # Build HarfBuzz in a subshell to avoid needing pushd/popd/cd
         if [ -n "${HARFBUZZ_DIR}" ]; then
             printf "Using directory %s to build harfbuzz\n" "${HARFBUZZ_DIR}"
