@@ -1,4 +1,5 @@
 st
+config.mk
 *.o
 pkg/
 *.pkg.tar.xz

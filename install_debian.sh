@@ -102,7 +102,7 @@ if "${BUILD_HARFBUZZ}"; then
         fi
 
         printf "Cloning HarfBuzz repository into %s\n" "$(pwd)/harfbuzz"
-        git clone https://github.com/harfbuzz/harfbuzz.git
+        git clone https://github.com/harfbuzz/harfbuzz.git 2> /dev/null || true
         cd harfbuzz
         if ${USE_MESON}; then
             meson build || printerr "Meson build failed. Check meson.logs in %s\n" "$(pwd)"
