@@ -368,7 +368,7 @@ void mousesel(XEvent *e, int done) {
 void mousereport(XEvent *e) {
     int len;
     int x = evcol(e);
-    int y = evrow(e),
+    int y = evrow(e);
     int button = e->xbutton.button;
     int state = e->xbutton.state;
     char buf[40];
@@ -1428,7 +1428,7 @@ void xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len,
                          int x, int y, int dmode) {
     int charlen = len * ((base.mode & ATTR_WIDE) ? 2 : 1);
     int winx = win.hborderpx + x * win.cw;
-    int winy = win.vborderpx + y * win.ch,
+    int winy = win.vborderpx + y * win.ch;
     int width = charlen * win.cw;
     Color *fg, *bg, *temp, revfg, revbg, truefg, truebg;
     XRenderColor colfg, colbg;

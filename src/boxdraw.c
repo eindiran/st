@@ -183,25 +183,25 @@ void drawboxlines(int x, int y, int w, int h, XftColor *fg, ushort bd) {
         int dl = bd & DL, du = bd & DU, dr = bd & DR, dd = bd & DD;
         if (dl) {
             int p = dd ? -s : 0;
-            n = du ? -s : dd ? s : 0;
+            int n = du ? -s : dd ? s : 0;
             XftDrawRect(xd, fg, x, y + h2 + s, w2 + s + p, s);
             XftDrawRect(xd, fg, x, y + h2 - s, w2 + s + n, s);
         }
         if (du) {
             int p = dl ? -s : 0;
-            n = dr ? -s : dl ? s : 0;
+            int n = dr ? -s : dl ? s : 0;
             XftDrawRect(xd, fg, x + w2 - s, y, s, h2 + s + p);
             XftDrawRect(xd, fg, x + w2 + s, y, s, h2 + s + n);
         }
         if (dr) {
             int p = du ? -s : 0;
-            n = dd ? -s : du ? s : 0;
+            int n = dd ? -s : du ? s : 0;
             XftDrawRect(xd, fg, x + w2 - p, y + h2 - s, w - w2 + p, s);
             XftDrawRect(xd, fg, x + w2 - n, y + h2 + s, w - w2 + n, s);
         }
         if (dd) {
             int p = dr ? -s : 0;
-            n = dl ? -s : dr ? s : 0;
+            int n = dl ? -s : dr ? s : 0;
             XftDrawRect(xd, fg, x + w2 + s, y + h2 - p, s, h - h2 + p);
             XftDrawRect(xd, fg, x + w2 - s, y + h2 - n, s, h - h2 + n);
         }

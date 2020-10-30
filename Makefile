@@ -4,14 +4,15 @@
 
 include config.mk
 
-SRC = st.c x.c boxdraw.c hb.c
-OBJ = $(SRC:.c=.o)
-UNAME := $(shell uname)
+SRC_DIR := src
+SRC     := $(SRC_DIR)/st.c $(SRC_DIR)/x.c $(SRC_DIR)/boxdraw.c $(SRC_DIR)/hb.c
+OBJ     := $(notdir $(SRC:.c=.o))
+UNAME   := $(shell uname)
 
 ifeq ($(UNAME), Linux)
-	INSTALL_TARGET = install_linux
+	INSTALL_TARGET := install_linux
 else
-	INSTALL_TARGET = install_openbsd
+	INSTALL_TARGET := install_openbsd
 endif
 
 .PHONY: all
@@ -24,18 +25,15 @@ options:
 	@echo "LDFLAGS = $(STLDFLAGS)"
 	@echo "CC      = $(CC)"
 
-config.h:
-	cp config.def.h config.h
-
-.c.o:
+%.o : $(SRC_DIR)/%.c
 	$(CC) $(STCFLAGS) -c $<
 
-st.o: config.h st.h win.h
-x.o: arg.h config.h st.h win.h hb.h
-hb.o: st.h
-boxdraw.o: config.h st.h boxdraw_data.h
+st.o: src/config.h src/st.h src/win.h
+x.o: src/arg.h src/config.h src/st.h src/win.h src/hb.h
+hb.o: src/st.h
+boxdraw.o: src/config.h src/st.h src/boxdraw_data.h
 
-$(OBJ): config.h config.mk
+$(OBJ): src/config.h config.mk
 
 st: $(OBJ)
 	$(CC) -o $@ $(OBJ) $(STLDFLAGS)
@@ -46,12 +44,14 @@ clean:
 
 .PHONY: dist
 dist: clean
+	@echo "Packaging tarball for release: st-$(VERSION)"
 	mkdir -p st-$(VERSION)
-	cp -R FAQ LEGACY TODO LICENSE Makefile README config.mk\
-		config.def.h st.info st.1 arg.h st.h win.h $(SRC)\
+	cp -R LICENSE Makefile README.md config.mk\
+		st.info st.1 src/arg.h src/st.h src/win.h $(SRC)\
 		st-$(VERSION)
 	tar -cf - st-$(VERSION) | gzip > st-$(VERSION).tar.gz
 	rm -rf st-$(VERSION)
+	@echo "Created new dist tarball: $(shell readlink -f st-$(VERSION).tar.gz)"
 
 .PHONY: install
 install:
@@ -59,7 +59,7 @@ install:
 
 .PHONY: install_linux
 install_linux: st
-	@echo Installing using Linux flags
+	@echo "Installing using Linux flags"
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f st $(DESTDIR)$(PREFIX)/bin
 	cp -f st-copyout $(DESTDIR)$(PREFIX)/bin
@@ -71,11 +71,11 @@ install_linux: st
 	sed "s/VERSION/$(VERSION)/g" < st.1 > $(DESTDIR)$(MANPREFIX)/man1/st.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/st.1
 	tic -sx st.info
-	@echo Please see the README file regarding the terminfo entry of st.
+	@echo "Please see the README.md file regarding the terminfo entry of st."
 
 .PHONY: install_openbsd
 install_openbsd: st
-	@echo Installing using OpenBSD flags
+	@echo "Installing using OpenBSD flags"
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f st $(DESTDIR)$(PREFIX)/bin
 	cp -f st-copyout $(DESTDIR)$(PREFIX)/bin
@@ -88,11 +88,13 @@ install_openbsd: st
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/st.1
 	sed 's/st\([^t].*\)/st-git\1/g' st.info > st-git.info
 	tic -s st-git.info
-	@echo Please see the README file regarding the terminfo entry of st.
+	@echo "Please see the README file regarding the terminfo entry of st."
 
 .PHONY: uninstall
 uninstall:
+	@echo "Uninstalling st."
 	rm -f $(DESTDIR)$(PREFIX)/bin/st
 	rm -f $(DESTDIR)$(PREFIX)/bin/st-copyout
 	rm -f $(DESTDIR)$(PREFIX)/bin/st-urlhandler
 	rm -f $(DESTDIR)$(MANPREFIX)/man1/st.1
+	@echo "Uninstallation complete!"

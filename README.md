@@ -1,5 +1,7 @@
 # Luke's build of st - the simple (suckless) terminal
 
+__NOTE:__ forked at version 0.8.2.
+
 The [suckless terminal (st)](https://st.suckless.org/) with some additional features that make it literally the best terminal emulator ever:
 
 ## Unique features (using dmenu)
@@ -57,9 +59,9 @@ This build uses `config.arch-linux.mk`.
 ```bash
 git clone https://github.com/eindiran/st
 cd st
-./install_openbsd.sh
+./install_openbsd.sh # Will prompt the user for super user privileges.
 ```
-Use `config.openbsd.mk`.
+This build uses `config.openbsd.mk`.
 
 ## How to configure dynamically with Xresources
 
