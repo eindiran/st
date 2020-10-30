@@ -39,6 +39,20 @@ Chances are, you have most of these packages installed already.
 
 Be sure to have a composite manager (`xcompmgr`, `picom`, etc.) running if you want transparency.
 
+If you want to build `st` without using one of the `install_<os>.sh` scripts, make sure you copy or link the relevant copy of `config.mk` before running `make`.
+
+Once everything is setup the first time, in the future you can simply run this to build everything:
+
+```bash
+make clean all
+```
+
+To package a release version:
+
+```bash
+make clean all dist
+```
+
 #### On Debian-based distributions:
 ```bash
 git clone https://github.com/eindiran/st
