@@ -96,7 +96,14 @@ const int boxdraw_braille = 1;
 static int bellvolume = 0;
 
 /* default TERM value */
-char *termname = "st-256color";
+// Change termname for OpenBSD
+#if __OpenBSD__
+    char *termname = "st-git-256color";
+#elif __linux__
+    char *termname = "st-256color";
+#else
+    char *termname = "st-256color";
+#endif
 
 /*
  * spaces per tab
