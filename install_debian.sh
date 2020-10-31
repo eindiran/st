@@ -8,7 +8,15 @@
 #   DESCRIPTION: Compile and install `st` on Ubuntu/Debian-flavoured distros.
 #
 #       OPTIONS: -d: (optional) Use this flag to set the directory where HarfBuzz
-#                    will be downloaded to (and built in).
+#                    will be downloaded to (and built in). Takes a relative or
+#                    absolute path as an argument.
+#                -s: (optional) Skip checking whether HarfBuzz is installed
+#                    (default: false).
+#                -m: (optional) Use meson to build HarfBuzz
+#                    (default: autoconf/automake).
+#                -n: (optional) Don't build HarfBuzz (default: false).
+#                -h: Print this help/info message and exit.
+#
 #  REQUIREMENTS: apt-get, git, make, a C99 compiler
 #         NOTES: ---
 #        AUTHOR: Elliott Indiran <elliott.indiran@protonmail.com>
