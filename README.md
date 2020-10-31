@@ -1,8 +1,8 @@
-# Luke's build of st - the simple (suckless) terminal
+# st - the simple (suckless) terminal
 
-__NOTE:__ forked at version 0.8.2.
+__NOTE:__ forked from `st` at version 0.8.2 and from [Luke's `st` build](https://github.com/LukeSmithxyz/st) on [8ab3d036](https://github.com/LukeSmithxyz/st/commit/8ab3d03681479263a11b05f7f1b53157f61e8c3b).
 
-The [suckless terminal (st)](https://st.suckless.org/) with some additional features that make it literally the best terminal emulator ever:
+The [suckless terminal (st)](https://st.suckless.org/) with some additional features:
 
 ## Unique features (using dmenu)
 
@@ -29,7 +29,13 @@ The [suckless terminal (st)](https://st.suckless.org/) with some additional feat
 + Vertcenter
 + Scrollback
 + font2
-+ updated to latest version 0.8.2
++ Updated to latest version 0.8.2
++ Don't log mysterious error messages when using `tmux` and the `Home` and `End` keys.
++ Make compiling and installing `st` incredibly easy on:
+  + Ubuntu (and derived distros)
+  + Debian (and derived distros)
+  + Arch (and derived distros)
+  + OpenBSD
 
 ## Installation
 Obviously, `make` is required to build. `fontconfig` is required for the default build, since it asks `fontconfig` for your system monospace font.
