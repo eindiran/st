@@ -12,7 +12,7 @@ The [suckless terminal (st)](https://st.suckless.org/) with some additional feat
 + **Zoom** and **change font size** by holding down `Shift` (`Alt-Shift-Pageup/Pagedown`, `Alt-Shift-↑/↓`). `Alt-home` returns to default.
 + **Copy text** with `Alt-c`.
 + **Paste** with `Alt-v` or `Shift-Insert`.
-+ Compatibility with `Xresources` and `pywal` for **dynamic colors**.
++ Compatibility with `Xresources`, `wal` and `pywal` for **dynamic colors**.
   + Default [gruvbox](https://github.com/morhetz/gruvbox) colors otherwise.
 + **Transparency/alpha**, which is also adjustable from your `Xresources`.
 + Default font is system `mono` at 14pt, meaning the font will match your system font.
@@ -96,15 +96,14 @@ For example, you can define your desired fonts, transparency or colors:
 
 The `alpha` value (for transparency) goes from `0` (transparent) to `1` (opaque).
 
-### Colors
+### Color precedence
 
-To be clear about the color settings:
++ If `wal` or `pywal` have been run in this session, their colors will take priority.
++ If not, and there are Xresources colors define, those will take priority.
++ If not, then the colors defined in `config.h` will be used.
+  + If you have not changed these colors, they will matched the [gruvbox theme](https://github.com/morhetz/gruvbox).
 
-- This build will use gruvbox colors by default and as a fallback.
-- If there are Xresources colors defined, those will take priority.
-- But if `wal` has run in your session, its colors will take priority.
-
-Note that when you run `wal`, it will negate the transparency of existing windows, but new windows will continue with the previously defined transparency.
+__NOTE:__ when you run `wal`/`pywal`, it will negate the transparency of existing windows. New windows will be created with the previously defined transparency.
 
 ## Notes on Emojis and Special Characters
 
