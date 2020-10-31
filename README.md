@@ -4,47 +4,45 @@ __NOTE:__ forked from `st` at version 0.8.2 and from [Luke's `st` build](https:/
 
 The [suckless terminal (st)](https://st.suckless.org/) with some additional features:
 
-## Unique features (using dmenu)
-
-+ **follow urls** by pressing `alt-l`
-+ **copy urls** in the same way with `alt-y`
-+ **copy the output of commands** with `alt-o`
-
-## Bindings for
-
-+ **scrollback** with `alt-↑/↓` or `alt-pageup/down` or `shift` while scrolling the mouse
-+ OR **vim-bindings**: scroll up/down in history with `alt-k` and `alt-j`. Faster with `alt-u`/`alt-d`.
-+ **zoom/change font size**: same bindings as above, but holding down shift as well. `alt-home` returns to default
-+ **copy text** with `alt-c`, **paste** is `alt-v` or `shift-insert`
-
-## Pretty stuff
-
-+ Compatibility with `Xresources` and `pywal` for dynamic colors.
-+ Default [gruvbox](https://github.com/morhetz/gruvbox) colors otherwise.
-+ Transparency/alpha, which is also adjustable from your `Xresources`.
-+ Default font is system "mono" at 14pt, meaning the font will match your system font.
-
-## Other st patches
-
-+ Vertcenter
-+ Scrollback
-+ font2
-+ Updated to latest version 0.8.2
++ **Follow urls** by pressing `Alt-l` (powered by `dmenu`).
++ **Copy urls** with `Alt-y` (powered by `dmenu`).
++ **Copy the output of commands** with `Alt-o` (powered by `dmenu`).
++ Bindings for **scrollback** with `Alt-↑/↓` or `Alt-Pageup/Pagedown` or `Shift` while scrolling the mouse.
+  + Alternatively, you can use **vim-bindings**: scroll up/down in history with `Alt-k` and `Alt-j`. Faster with `Alt-u`/`Alt-d`.
++ **Zoom** and **change font size** by holding down `Shift` (`Alt-Shift-Pageup/Pagedown`, `Alt-Shift-↑/↓`). `Alt-home` returns to default.
++ **Copy text** with `Alt-c`.
++ **Paste** with `Alt-v` or `Shift-Insert`.
++ Compatibility with `Xresources` and `pywal` for **dynamic colors**.
+  + Default [gruvbox](https://github.com/morhetz/gruvbox) colors otherwise.
++ **Transparency/alpha**, which is also adjustable from your `Xresources`.
++ Default font is system `mono` at 14pt, meaning the font will match your system font.
++ **Vertcenter**
++ **Scrollback**
++ Support for a **secondary font**.
 + Don't log mysterious error messages when using `tmux` and the `Home` and `End` keys.
-+ Make compiling and installing `st` incredibly easy on:
-  + Ubuntu (and derived distros)
-  + Debian (and derived distros)
-  + Arch (and derived distros)
-  + OpenBSD
++ Support super easy compilation/installation `st` on:
+  + **Ubuntu** (and derived distros)
+  + **Debian** (and derived distros)
+  + **Arch** (and derived distros)
+  + **OpenBSD**
 
 ## Installation
-Obviously, `make` is required to build. `fontconfig` is required for the default build, since it asks `fontconfig` for your system monospace font.
-HarfBuzz is used for text-shaping. If you system doesn't have a `libharfbuzz-dev` package, see the steps for compiling it in `install_debian.sh`.
-`libX11` and `libXft` are required as well.
-Chances are, you have most of these packages installed already.
 
-Be sure to have a composite manager (`xcompmgr`, `picom`, etc.) running if you want transparency.
+#### Requirements:
 
++ Obviously, `make` and a C compiler are required to build `st`.
++ `fontconfig` is required for the default build, since it asks `fontconfig` for your system monospace font.
++ HarfBuzz is used for text-shaping.
+  + If you system doesn't have a `libharfbuzz-dev` package, see the steps for compiling it in `install_debian.sh`.
++ `libX11`
++ `libXft`
++ `libXext`
+
+Many systems already have all of these packages out-of-the-box.
+
+Be sure to have a composite manager (`xcompmgr`, `picom`, etc.) running if you want `st` to support transparency.
+
+#### Building with `make` only:
 If you want to build `st` without using one of the `install_<os>.sh` scripts, make sure you copy or link the relevant copy of `config.mk` before running `make`.
 
 Once everything is setup the first time, in the future you can simply run this to build everything:
@@ -110,11 +108,6 @@ Note that when you run `wal`, it will negate the transparency of existing window
 
 ## Notes on Emojis and Special Characters
 
-If st crashes when viewing emojis, install [libxft-bgra](https://aur.archlinux.org/packages/libxft-bgra/) from the AUR.
+If `st` crashes when viewing emojis, install [libxft-bgra](https://aur.archlinux.org/packages/libxft-bgra/) from the AUR.
 
 Note that some special characters may appear truncated if too wide. You might want to manually set your prefered emoji/special character font to a lower size in the `config.h` file to avoid this. By default, JoyPixels is used at a smaller size than the usual text.
-
-## Contact
-
-- Luke Smith <luke@lukesmith.xyz>
-- [https://lukesmith.xyz](https://lukesmith.xyz)
