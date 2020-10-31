@@ -88,7 +88,7 @@ cp -a config.debian-linux.mk config.mk
 
 # Install explicit st dependencies:
 printf "Installing st dependencies\n"
-sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1 libfreetype6-dev
+sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1 libfreetype6-dev xclip
 
 if "${BUILD_HARFBUZZ}"; then
     (

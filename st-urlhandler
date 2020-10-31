@@ -1,15 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-urlregex="(((http|https)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
+URL_REGEX="(((http|https)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
 
 # First remove linebreaks and mutt sidebars:
-urls="$(sed 's/.*│//g' | tr -d '\n' |
-	grep -aEo "$urlregex" | # grep only urls as defined above.
-	uniq | # Ignore neighboring duplicates.
-	sed 's/^www./http:\/\/www\./g')"
+URLS="$(sed 's/.*│//g' | tr -d '\n' | grep -aEo "$URL_REGEX" | uniq | sed 's/^www./http:\/\/www\./g')"
+# Since this is unsorted, uniq will only remove adjacent duplicates
 
-[ -z "$urls" ] && exit
-
-chosen="$(echo "$urls" | dmenu -i -p 'Follow which url?' -l 10)"
-
-setsid xdg-open "$chosen" >/dev/null 2>&1 &
+# Don't bother proceeding if there are no valid URLs:
+if [ -n "$URLS" ]; then
+    CHOSEN_URLS="$(echo "$URLS" | dmenu -i -p 'Follow which url?' -l 10)"
+    setsid xdg-open "$CHOSEN_URLS" >/dev/null 2>&1 &
+fi
