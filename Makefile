@@ -40,7 +40,7 @@ st: $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f st $(OBJ) st-$(VERSION).tar.gz *.o *.orig *.rej
+	rm -f st $(OBJ) st-*.tar.gz *.o *.orig *.rej
 
 .PHONY: dist
 dist: clean
