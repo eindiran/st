@@ -178,9 +178,12 @@ static unsigned int cols = 80;
 static unsigned int rows = 24;
 
 /*
- * Default colour and shape of the mouse cursor
+ * Default colour and shape of the mouse cursor:
+ * By default st uses `XC_xterm`, which is small and hard
+ * to see. We should instead use `XC_left_ptr`, which is the
+ * default mouse cursor outside the shell.
  */
-static unsigned int mouseshape = XC_xterm;
+static unsigned int mouseshape = XC_left_ptr;
 static unsigned int mousefg = 7;
 static unsigned int mousebg = 0;
 
