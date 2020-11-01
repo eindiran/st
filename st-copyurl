@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# This script is used to copy URLs. See also:
+# st-urlhandler, for opening URLs.
+set -Eeuo pipefail
+
+URL_REGEX="(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$#=_-~]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
+
+# Remove linebreaks and mutt sidebars, etc:
+URLS="$(sed 's/.*│//g' | tr -d '\n' | grep -aEo "$URL_REGEX" | uniq | sed 's/^www./http:\\/\\/www\\./g')"
+# Since this isn't sorted, uniq will only remove adjacent duplicates.
+
+# Don't bother proceeding if there are no valid URLs:
+IFS=; if [ -n "$URLS"]; then
+    SELECTION="$(echo "$URLS" | dmenu -i -p 'Copy which url?' -l 10)"
+    # Copy into the `clipboard` buffer:
+    tr -d '\n' "$SELECTION" | xclip -selection clipboard
+    # Change these if you want this script to use a buffer other than `clipboard`:
+    if false; then
+        # Copy into the `primary` buffer:
+        tr -d '\n' "$SELECTION" | xclip -selection primary
+        # Copy into the `secondary` buffer:
+        tr -d '\n' "$SELECTION" | xclip -selection secondary
+    fi
+fi
