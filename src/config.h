@@ -95,14 +95,18 @@ const int boxdraw_braille = 1;
  */
 static int bellvolume = 0;
 
-/* default TERM value */
+/**
+ * Default $TERM value:
+ * st will set this environment variable to whatever
+ * value is set below.
+ */
 // Change termname for OpenBSD
 #if __OpenBSD__
-    char *termname = "st-git-256color";
+    static char *termname = "st-git-256color";
 #elif __linux__
-    char *termname = "st-256color";
+    static char *termname = "st-256color";
 #else
-    char *termname = "st-256color";
+    static char *termname = "st-256color";
 #endif
 
 /*
@@ -127,7 +131,9 @@ float alpha = 0.8;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+
+    // 8 normal colors:
+    "#282828", // hard contrast: #1d2021 / soft contrast: #32302f
     "#cc241d",
     "#98971a",
     "#d79921",
@@ -135,6 +141,8 @@ static const char *colorname[] = {
     "#b16286",
     "#689d6a",
     "#a89984",
+
+    // 8 normal colors:
     "#928374",
     "#fb4934",
     "#b8bb26",
@@ -143,8 +151,10 @@ static const char *colorname[] = {
     "#d3869b",
     "#8ec07c",
     "#ebdbb2",
+
     [255] = 0,
-    /* more colors can be added after 255 to use with DefaultXX */
+
+    // More colors can be added after 255 to use with DefaultXX:
     "#add8e6", /* 256 -> cursor */
     "#555555", /* 257 -> rev cursor*/
     "#282828", /* 258 -> bg */
@@ -153,13 +163,16 @@ static const char *colorname[] = {
 
 
 /*
- * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
+ * Default colors (given as an index into colorname[], see above):
+ *      cursor         - defaultcs
+ *      reverse cursor - defaultrcs
+ *      background     - defaultbg
+ *      foreground     - defaultfg
  */
-unsigned int defaultfg = 259;
-unsigned int defaultbg = 258;
-unsigned int defaultcs = 256;
+unsigned int defaultcs  = 256;
 unsigned int defaultrcs = 257;
+unsigned int defaultbg  = 258;
+unsigned int defaultfg  = 259;
 
 /*
  * Default shape of cursor
@@ -254,9 +267,7 @@ MouseKey mkeys[] = {
 
 static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler", "externalpipe", NULL };
 
-static char *copyurlcmd[] = { "/bin/sh", "-c",
-    "tmp=$(sed 's/.*│//g' | tr -d '\n' | grep -aEo '(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$#=_-~]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)' | uniq | sed 's/^www./http:\\/\\/www\\./g' ); IFS=; [ ! -z $tmp ] && echo $tmp | dmenu -i -p 'Copy which url?' -l 10 | tr -d '\n' | xclip -selection clipboard",
-    "externalpipe", NULL };
+static char *copyurlcmd[] = { "/bin/sh", "-c", "st-copyurl", "externalpipe", NULL };
 
 static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
 
