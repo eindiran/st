@@ -83,8 +83,8 @@ while getopts "d:smnh" o; do
     esac
 done
 
-printf "Copying config.debian-linux.mk to config.mk\n"
-cp -a config.debian-linux.mk config.mk
+printf "Linking config.mk to config.debian-linux.mk\n"
+ln -fns config.debian-linux.mk config.mk
 
 # Install explicit st dependencies:
 printf "Installing st dependencies\n"

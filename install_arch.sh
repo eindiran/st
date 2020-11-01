@@ -51,8 +51,8 @@ while getopts "h" o; do
     esac
 done
 
-printf "Copying config.arch-linux.mk to config.mk\n"
-cp -a config.arch-linux.mk config.mk
+printf "Linking config.mk to config.arch-linux.mk\n"
+ln -fns config.arch-linux.mk config.mk
 
 printf "Compiling st...\n"
 make clean

@@ -51,8 +51,8 @@ while getopts "h" o; do
     esac
 done
 
-printf "Copying config.openbsd.mk to config.mk\n"
-cp -a config.openbsd.mk config.mk
+printf "Linking config.mk to config.openbsd.mk\n"
+ln -fns config.openbsd.mk config.mk
 
 printf "Compiling st...\n"
 make clean
