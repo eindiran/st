@@ -83,13 +83,17 @@ while getopts "d:asmnih" o; do
         a)
             ADD_UA_ENTRY=true
             # Bash getopts doesn't support optional argument values,
-            # so we have to use this ugly hack to support that:
+            # so we have to use this ugly hack to get around that:
             set +u
+            # Temporarily allow unset variables, as this will be
+            # unset in the case that there are no more args left
+            # ie '-a' was the final argument:
             eval "NEXT_OPTION=\${$OPTIND}"
             if [[ ! "${NEXT_OPTION}" =~ - ]]; then
                 PRIORITY="${NEXT_OPTION}"
                 shift 1
             fi
+            # Turn unset-variable checking back on:
             set -u
             ;;
         m)
