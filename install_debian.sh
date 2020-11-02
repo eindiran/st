@@ -3,19 +3,27 @@
 #
 #          FILE: install_debian.sh
 #
-#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY] [-s] [-m] [-n] [-i] [-h]
+#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY] [-a [PRIORITY]] [-s]
+#                                    [-m] [-n] [-i]
+#
+#                ./install_debian.sh -h
 #
 #   DESCRIPTION: Compile and install `st` on Ubuntu/Debian-flavoured distros.
 #
 #       OPTIONS: -d: (optional) Use this flag to set the directory where HarfBuzz
 #                    will be downloaded to (and built in). Takes a relative or
 #                    absolute path as an argument.
+#                -a: (optional) Add update-alternatives entry for
+#                    x-terminal-emulator (default: false). Optionally takes an
+#                    integer argument, which is used as the priority for
+#                    auto-mode (default priority: 1).
 #                -s: (optional) Skip checking whether HarfBuzz is installed
 #                    (default: false).
 #                -m: (optional) Use meson to build HarfBuzz
 #                    (default: autoconf/automake).
 #                -n: (optional) Don't build HarfBuzz (default: false).
-#                -i: (optional) Install the icon (default: false).
+#                -i: (optional) Install the icons and .desktop file
+#                    (default: false).
 #                -h: Print this help/info message and exit.
 #
 #  REQUIREMENTS: apt-get, git, make, a C99 compiler
@@ -30,13 +38,16 @@ usage() {
     printf "install_debian.sh:\n"
     printf "\tInstall required components for compiling st on Debian-based distros.\n\n"
     printf "\t[USAGE]\n"
-    printf "\t\t./install_debian.sh [-d <HARFBUZZ_DIR>] [-s] [-m] [-n] [-i] [-h]\n\n"
+    printf "\t\t./install_debian.sh [-d <HARFBUZZ_DIR>] [-a PRIORITY] [-s] [-m] [-n] [-i] [-h]\n\n"
     printf "\t[OPTIONS]\n"
-    printf "\t\t-d (optional) -- Set directory where HarfBuzz will be downloaded (default: pwd).\n"
+    printf "\t\t-d (optional) -- Choose where to download HarfBuzz (default: pwd).\n"
+    printf "\t\t-a (optional) -- Add a 'x-terminal-emulator' entry to update-alternatives for st.\n"
+    printf "\t\t                 Optionally takes an int priority (default priority: 1).\n"
     printf "\t\t-s (optional) -- Skip checking whether HarfBuzz is installed (default: false).\n"
     printf "\t\t-m (optional) -- Use meson to build HarfBuzz (default: autoconf/automake).\n"
     printf "\t\t-n (optional) -- Don't build HarfBuzz (default: false).\n"
-    printf "\t\t-i (optional) -- Install the icon (default: false).\n"
+    printf "\t\t                 This flag overrides the -d and -m flags.\n"
+    printf "\t\t-i (optional) -- Install the .desktop file and icons (default: false).\n"
     printf "\t\t-h (optional) -- Print this message and exit.\n\n"
     printf "\t[REQUIREMENTS]\n"
     printf "\t\t> apt-get\n"
@@ -58,13 +69,28 @@ printerr() {
 HARFBUZZ_DIR="$(pwd)"
 BUILD_HARFBUZZ=true
 USE_MESON=false
-SKIP_INCLUDES_CHECK=false
+SKIP_HB_INCLUDES_CHECK=false
 INSTALL_ICON=false
+INSTALL_DESKTOP=false
+ADD_UA_ENTRY=false
+PRIORITY=1
 
-while getopts "d:smnih" o; do
+while getopts "d:asmnih" o; do
     case "${o}" in
         d)
             HARFBUZZ_DIR="${OPTARG}"
+            ;;
+        a)
+            ADD_UA_ENTRY=true
+            # Bash getopts doesn't support optional argument values,
+            # so we have to use this ugly hack to support that:
+            set +u
+            eval "NEXT_OPTION=\${$OPTIND}"
+            if [[ ! "${NEXT_OPTION}" =~ - ]]; then
+                PRIORITY="${NEXT_OPTION}"
+                shift 1
+            fi
+            set -u
             ;;
         m)
             USE_MESON=true
@@ -73,10 +99,14 @@ while getopts "d:smnih" o; do
             BUILD_HARFBUZZ=false
             ;;
         s)
-            SKIP_INCLUDES_CHECK=true
+            SKIP_HB_INCLUDES_CHECK=true
             ;;
         i)
+            # REVISIT: Currently we always do both,
+            # however there isn't a reason why this
+            # needs to be the case.
             INSTALL_ICON=true
+            INSTALL_DESKTOP=true
             ;;
         h)
             usage
@@ -138,7 +168,7 @@ else
     printf "Skipping HarfBuzz build.\n"
 fi
 
-if "${SKIP_INCLUDES_CHECK}"; then
+if "${SKIP_HB_INCLUDES_CHECK}"; then
     printf "Skipping HarfBuzz includes check...\n"
 else
     printf "Checking for HarfBuzz includes...\n"
@@ -163,6 +193,16 @@ chmod a+x ./st
 printf "Compilation complete!\n"
 printf "st is available here: %s\n" "$(readlink -f ./st)"
 
-printf "Installing st.desktop file...\n"
-sudo desktop-file-install st.desktop
+if "${INSTALL_DESKTOP}"; then
+    printf "Installing st.desktop file...\n"
+    sudo desktop-file-install st.desktop
+    printf "st.desktop was successfully installed!\n"
+fi
+
+if "${ADD_UA_ENTRY}"; then
+    printf "Adding update-alternatives 'x-terminal-emulator' entry for st\n"
+    sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/st "${PRIORITY}"
+    printf "'x-terminal-emulator' update-alternatives entry added with priority %i\n" "${PRIORITY}"
+fi
+
 printf "Installation complete!\n"
