@@ -90,8 +90,8 @@ fi
 
 printf "Installing dependencies...\n"
 # We need to install HarfBuzz, the various X libraries, fontconfig, pkg-config,
-# and desktop-file-install:
-pacman -S desktop-file-utils harfbuzz libx11 libxft libxext fontconfig pkgconf
+# desktop-file-install, and dmenu:
+pacman -S desktop-file-utils harfbuzz libx11 libxft libxext fontconfig pkgconf dmenu
 printf "Installation of dependencies complete!\n"
 
 printf "Compiling st...\n"
