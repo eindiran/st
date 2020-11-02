@@ -2,5 +2,6 @@ st
 config.mk
 *.o
 pkg/
+harfbuzz/
 *.pkg.tar.xz
 patches
