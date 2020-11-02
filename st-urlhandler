@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
 
-URL_REGEX="(((http|https)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
+HTTP_URL_REGEX="(((http|https)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
 
 # First remove linebreaks and mutt sidebars:
-URLS="$(sed 's/.*│//g' | tr -d '\n' | grep -aEo "$URL_REGEX" | uniq | sed 's/^www./http:\/\/www\./g')"
-# Since this is unsorted, uniq will only remove adjacent duplicates
+URLS="$(sed 's/.*│//g' | tr -d '\n' | grep -aEo "$HTTP_URL_REGEX" | uniq | sed 's/^www./http:\/\/www\./g')"
+# Since this is unsorted, uniq will only remove adjacent duplicates.
 
 # Don't bother proceeding if there are no valid URLs:
 if [ -n "$URLS" ]; then

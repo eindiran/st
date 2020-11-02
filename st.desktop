@@ -1,0 +1,30 @@
+[Desktop Entry]
+
+Type=Application
+
+# Version of the freedesktop specification that this file uses.
+# This is NOT the version of `st`
+Version=1.0
+
+# Name of the application:
+Name=Simple Terminal
+
+# Generic name for applications of this type:
+GenericName=Terminal
+
+Comment=st, the Suckless terminal emulator for X
+
+# Use `utilities-terminal` for the default icon; otherwise
+# you specify an absolute path to point to the correct file.
+Icon=/usr/share/icons/st/icon.png
+
+# Use the -f flag here to set the font; otherwise the default
+# font in config.h will be used, which requires a recompile to
+# pick up.
+Exec=st
+
+Terminal=false
+
+Categories=System;TerminalEmulator
+
+Keywords=bash;cmd;command;commandline;prompt;sh;shell;term;xterm;zsh

@@ -8,7 +8,7 @@
 #   DESCRIPTION: Compile and install `st` on OpenBSD.
 #
 #       OPTIONS: -h: Print the help info and exit.
-#  REQUIREMENTS: None.
+#  REQUIREMENTS: make, A C99 compiler
 #         NOTES: ---
 #        AUTHOR: Elliott Indiran <elliott.indiran@protonmail.com>
 #       CREATED: 10/28/2020
@@ -51,8 +51,8 @@ while getopts "h" o; do
     esac
 done
 
-printf "Copying config.openbsd.mk to config.mk\n"
-cp -a config.openbsd.mk config.mk
+printf "Linking config.mk to config.openbsd.mk\n"
+ln -fns config.openbsd.mk config.mk
 
 printf "Compiling st...\n"
 make clean

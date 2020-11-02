@@ -95,9 +95,15 @@ const int boxdraw_braille = 1;
  */
 static int bellvolume = 0;
 
-/* default TERM value */
-// Change termname for OpenBSD
+/**
+ * Default $TERM value:
+ * st will set this environment variable to whatever
+ * value is set below.
+ *
+ * `termname` is externed in st.c
+ */
 #if __OpenBSD__
+    // Change termname for OpenBSD
     char *termname = "st-git-256color";
 #elif __linux__
     char *termname = "st-256color";
@@ -127,7 +133,9 @@ float alpha = 0.8;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+
+    // 8 normal colors:
+    "#282828", // hard contrast: #1d2021 / soft contrast: #32302f
     "#cc241d",
     "#98971a",
     "#d79921",
@@ -135,6 +143,8 @@ static const char *colorname[] = {
     "#b16286",
     "#689d6a",
     "#a89984",
+
+    // 8 normal colors:
     "#928374",
     "#fb4934",
     "#b8bb26",
@@ -143,8 +153,10 @@ static const char *colorname[] = {
     "#d3869b",
     "#8ec07c",
     "#ebdbb2",
+
     [255] = 0,
-    /* more colors can be added after 255 to use with DefaultXX */
+
+    // More colors can be added after 255 to use with DefaultXX:
     "#add8e6", /* 256 -> cursor */
     "#555555", /* 257 -> rev cursor*/
     "#282828", /* 258 -> bg */
@@ -153,13 +165,16 @@ static const char *colorname[] = {
 
 
 /*
- * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
+ * Default colors (given as an index into colorname[], see above):
+ *      cursor         - defaultcs
+ *      reverse cursor - defaultrcs
+ *      background     - defaultbg
+ *      foreground     - defaultfg
  */
-unsigned int defaultfg = 259;
-unsigned int defaultbg = 258;
-unsigned int defaultcs = 256;
+unsigned int defaultcs  = 256;
 unsigned int defaultrcs = 257;
+unsigned int defaultbg  = 258;
+unsigned int defaultfg  = 259;
 
 /*
  * Default shape of cursor
@@ -178,9 +193,12 @@ static unsigned int cols = 80;
 static unsigned int rows = 24;
 
 /*
- * Default colour and shape of the mouse cursor
+ * Default colour and shape of the mouse cursor:
+ * By default st uses `XC_xterm`, which is small and hard
+ * to see. We should instead use `XC_left_ptr`, which is the
+ * default mouse cursor outside the shell.
  */
-static unsigned int mouseshape = XC_xterm;
+static unsigned int mouseshape = XC_left_ptr;
 static unsigned int mousefg = 7;
 static unsigned int mousebg = 0;
 
@@ -251,9 +269,7 @@ MouseKey mkeys[] = {
 
 static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler", "externalpipe", NULL };
 
-static char *copyurlcmd[] = { "/bin/sh", "-c",
-    "tmp=$(sed 's/.*│//g' | tr -d '\n' | grep -aEo '(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$#=_-~]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)' | uniq | sed 's/^www./http:\\/\\/www\\./g' ); IFS=; [ ! -z $tmp ] && echo $tmp | dmenu -i -p 'Copy which url?' -l 10 | tr -d '\n' | xclip -selection clipboard",
-    "externalpipe", NULL };
+static char *copyurlcmd[] = { "/bin/sh", "-c", "st-copyurl", "externalpipe", NULL };
 
 static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
 
