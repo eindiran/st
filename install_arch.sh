@@ -8,7 +8,7 @@
 #   DESCRIPTION: Compile and install `st` on Arch Linux.
 #
 #       OPTIONS: -h: Print the help info and exit.
-#                -i: Install the icon.
+#                -i: Install the icons and .desktop file.
 #  REQUIREMENTS: make, A C99 compiler
 #         NOTES: ---
 #        AUTHOR: Elliott Indiran <elliott.indiran@protonmail.com>
@@ -41,12 +41,15 @@ usage() {
 }
 
 # Flags:
-INSTALL_ICON=false
+INSTALL_ICONS=false
+INSTALL_DESKTOP=false
 
 while getopts "ih" o; do
     case "${o}" in
         i)
-            INSTALL_ICON=true
+            # REVISIT: These always have the same value currently.
+            INSTALL_ICONS=true
+            INSTALL_DESKTOP=true
             ;;
         h)
             usage
@@ -62,10 +65,27 @@ done
 printf "Linking config.mk to config.arch-linux.mk\n"
 ln -fns config.arch-linux.mk config.mk
 
-if "${INSTALL_ICON}"; then
-    printf "Installing the icon to /usr/share/icons/st/\n"
-    sudo mkdir -p /usr/share/icons/st/
-    sudo cp assets/st-icon-rounded-90.png /usr/share/icons/st/icon.png
+if "${INSTALL_ICONS}"; then
+    ICON_THEME_INSTALLED=false  # Track whether we have installed at least one icon theme
+    if [ -d /usr/share/icons/hicolor ]; then
+        ./install_icons.sh -t /usr/share/icons/hicolor -i assets/icons
+        ICON_THEME_INSTALLED=true
+    fi
+    if [ -d /usr/share/icons/elementary-xfce ]; then
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-dark -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darker -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darkest -i assets/icons
+        ICON_THEME_INSTALLED=true
+    fi
+    if "${ICON_THEME_INSTALLED}"; then
+        printf "Icon installation complete\n"
+    else
+        # If the user has neither of the two themes above at all (which
+        # is unlikely given how common `hicolor` is), this script can
+        # be changed to support another icon theme.
+        printf "[WARNING] No icons were installed!\n"
+    fi
 fi
 
 printf "Installing dependencies...\n"
@@ -82,6 +102,10 @@ chmod a+x ./st
 printf "Compilation complete!\n"
 printf "st is available here: %s\n" "$(readlink -f ./st)"
 
-printf "Installing st.desktop file...\n"
-sudo desktop-file-install st.desktop
+if "${INSTALL_DESKTOP}"; then
+    printf "Installing st.desktop file...\n"
+    sudo desktop-file-install st.desktop
+    printf "st.desktop was successfully installed!\n"
+fi
+
 printf "Installation complete!\n"
