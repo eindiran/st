@@ -21,7 +21,7 @@ Icon=/usr/share/icons/st/icon.png
 # Use the -f flag here to set the font; otherwise the default
 # font in config.h will be used, which requires a recompile to
 # pick up.
-Exec=st -t "Simple Terminal"
+Exec=st
 
 Terminal=false
 
