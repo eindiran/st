@@ -70,7 +70,7 @@ HARFBUZZ_DIR="$(pwd)"
 BUILD_HARFBUZZ=true
 USE_MESON=false
 SKIP_HB_INCLUDES_CHECK=false
-INSTALL_ICON=false
+INSTALL_ICONS=false
 INSTALL_DESKTOP=false
 ADD_UA_ENTRY=false
 PRIORITY=1
@@ -109,7 +109,7 @@ while getopts "d:asmnih" o; do
             # REVISIT: Currently we always do both,
             # however there isn't a reason why this
             # needs to be the case.
-            INSTALL_ICON=true
+            INSTALL_ICONS=true
             INSTALL_DESKTOP=true
             ;;
         h)
@@ -126,14 +126,31 @@ done
 printf "Linking config.mk to config.debian-linux.mk\n"
 ln -fns config.debian-linux.mk config.mk
 
-if "${INSTALL_ICON}"; then
-    printf "Installing the icon to /usr/share/icons/st/\n"
-    sudo mkdir -p /usr/share/icons/st/
-    sudo cp assets/st-icon-rounded-90.png /usr/share/icons/st/icon.png
+if "${INSTALL_ICONS}"; then
+    ICON_THEME_INSTALLED=false  # Track whether we have installed at least one icon theme
+    if [ -d /usr/share/icons/hicolor ]; then
+        ./install_icons.sh -t /usr/share/icons/hicolor -i assets/icons
+        ICON_THEME_INSTALLED=true
+    fi
+    if [ -d /usr/share/icons/elementary-xfce ]; then
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-dark -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darker -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darkest -i assets/icons
+        ICON_THEME_INSTALLED=true
+    fi
+    if "${ICON_THEME_INSTALLED}"; then
+        printf "Icon installation complete\n"
+    else
+        # If the user has neither of the two themes above at all (which
+        # is unlikely given how common `hicolor` is), this script can
+        # be changed to support another icon theme.
+        printf "[WARNING] No icons were installed!\n"
+    fi
 fi
 
 # Install explicit st dependencies:
-printf "Installing st dependencies\n"
+printf "Installing 'st' dependencies\n"
 sudo apt-get install -y libx11-dev libxft-dev libxext-dev pkg-config libfontconfig1 libfreetype6-dev xclip
 
 if "${BUILD_HARFBUZZ}"; then
@@ -172,10 +189,14 @@ else
     printf "Skipping HarfBuzz build.\n"
 fi
 
+printf "Installation of dependencies is complete!\n"
+
 if "${SKIP_HB_INCLUDES_CHECK}"; then
     printf "Skipping HarfBuzz includes check...\n"
 else
-    printf "Checking for HarfBuzz includes...\n"
+    printf "Checking that all libraries required at link time are found...\n"
+    # Since we install the other libraries via apt, its less important that we
+    # check that they exist here.
     if [ -a /usr/local/include/harfbuzz/hb.h ]; then
         printf "Found required files in /usr/local/include/harfbuzz/\n"
     elif [ -a /usr/include/harfbuzz/hb.h ]; then
