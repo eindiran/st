@@ -8,7 +8,7 @@
 #   DESCRIPTION: Compile and install `st` on OpenBSD.
 #
 #       OPTIONS: -h: Print the help info and exit.
-#  REQUIREMENTS: None.
+#  REQUIREMENTS: make, A C99 compiler
 #         NOTES: ---
 #        AUTHOR: Elliott Indiran <elliott.indiran@protonmail.com>
 #       CREATED: 10/28/2020

@@ -3,7 +3,7 @@
 #
 #          FILE: install_debian.sh
 #
-#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY] [-s] [-m] [-n] [-h]
+#         USAGE: ./install_debian.sh [-d HARFBUZZ_DIRECTORY] [-s] [-m] [-n] [-i] [-h]
 #
 #   DESCRIPTION: Compile and install `st` on Ubuntu/Debian-flavoured distros.
 #
@@ -15,6 +15,7 @@
 #                -m: (optional) Use meson to build HarfBuzz
 #                    (default: autoconf/automake).
 #                -n: (optional) Don't build HarfBuzz (default: false).
+#                -i: (optional) Install the icon (default: false).
 #                -h: Print this help/info message and exit.
 #
 #  REQUIREMENTS: apt-get, git, make, a C99 compiler
@@ -29,12 +30,13 @@ usage() {
     printf "install_debian.sh:\n"
     printf "\tInstall required components for compiling st on Debian-based distros.\n\n"
     printf "\t[USAGE]\n"
-    printf "\t\t./install_debian.sh [-d <HARFBUZZ_DIR>] [-s] [-m] [-n] [-h]\n\n"
+    printf "\t\t./install_debian.sh [-d <HARFBUZZ_DIR>] [-s] [-m] [-n] [-i] [-h]\n\n"
     printf "\t[OPTIONS]\n"
     printf "\t\t-d (optional) -- Set directory where HarfBuzz will be downloaded (default: pwd).\n"
     printf "\t\t-s (optional) -- Skip checking whether HarfBuzz is installed (default: false).\n"
     printf "\t\t-m (optional) -- Use meson to build HarfBuzz (default: autoconf/automake).\n"
     printf "\t\t-n (optional) -- Don't build HarfBuzz (default: false).\n"
+    printf "\t\t-i (optional) -- Install the icon (default: false).\n"
     printf "\t\t-h (optional) -- Print this message and exit.\n\n"
     printf "\t[REQUIREMENTS]\n"
     printf "\t\t> apt-get\n"
@@ -57,8 +59,9 @@ HARFBUZZ_DIR="$(pwd)"
 BUILD_HARFBUZZ=true
 USE_MESON=false
 SKIP_INCLUDES_CHECK=false
+INSTALL_ICON=false
 
-while getopts "d:smnh" o; do
+while getopts "d:smnih" o; do
     case "${o}" in
         d)
             HARFBUZZ_DIR="${OPTARG}"
@@ -71,6 +74,9 @@ while getopts "d:smnh" o; do
             ;;
         s)
             SKIP_INCLUDES_CHECK=true
+            ;;
+        i)
+            INSTALL_ICON=true
             ;;
         h)
             usage
@@ -85,6 +91,12 @@ done
 
 printf "Linking config.mk to config.debian-linux.mk\n"
 ln -fns config.debian-linux.mk config.mk
+
+if "${INSTALL_ICON}"; then
+    printf "Installing the icon to /usr/share/icons/st/\n"
+    sudo mkdir -p /usr/share/icons/st/
+    sudo cp assets/st-icon-rounded-90.png /usr/share/icons/st/icon.png
+fi
 
 # Install explicit st dependencies:
 printf "Installing st dependencies\n"
@@ -112,7 +124,7 @@ if "${BUILD_HARFBUZZ}"; then
         printf "Cloning HarfBuzz repository into %s\n" "$(pwd)/harfbuzz"
         git clone https://github.com/harfbuzz/harfbuzz.git 2> /dev/null || true
         cd harfbuzz
-        if ${USE_MESON}; then
+        if "${USE_MESON}"; then
             meson build || printerr "Meson build failed. Check meson.logs in %s\n" "$(pwd)"
             meson test -C build || printerr "Meson build failed. Check meson.logs in %s\n" "$(pwd)"
         else
@@ -150,3 +162,7 @@ sudo make install || printerr "Installation of st failed!\n"
 chmod a+x ./st
 printf "Compilation complete!\n"
 printf "st is available here: %s\n" "$(readlink -f ./st)"
+
+printf "Installing st.desktop file...\n"
+desktop-file-install st.desktop
+printf "Installation complete!\n"
