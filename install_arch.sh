@@ -83,5 +83,5 @@ printf "Compilation complete!\n"
 printf "st is available here: %s\n" "$(readlink -f ./st)"
 
 printf "Installing st.desktop file...\n"
-desktop-file-install st.desktop
+sudo desktop-file-install st.desktop
 printf "Installation complete!\n"
