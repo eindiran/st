@@ -129,40 +129,22 @@ ln -fns config.debian-linux.mk config.mk
 if "${INSTALL_ICONS}"; then
     ICON_THEME_INSTALLED=false  # Track whether we have installed at least one icon theme
     if [ -d /usr/share/icons/hicolor ]; then
-        printf "Installing icons in /usr/share/icons/hicolor/\n"
-        (
-            cd assets/icons
-            sudo cp --recursive --no-preserve=ownership ./* /usr/share/icons/hicolor
-            printf "Icons were added to the icon theme hicolor\n"
-            printf "Updating icon cache for 'hicolor'\n"
-            sudo touch /usr/share/icons/hicolor
-            sudo update-icon-caches /usr/share/icons/hicolor
-        )
+        ./install_icons.sh -t /usr/share/icons/hicolor -i assets/icons
         ICON_THEME_INSTALLED=true
     fi
     if [ -d /usr/share/icons/elementary-xfce ]; then
-        printf "Installing icons in /usr/share/icons/elementary-xfce*/\n"
-        (
-            cd assets/icons
-            sudo cp --recursive --no-preserve=ownership ./* /usr/share/icons/elementary-xfce
-            sudo cp --recursive --no-preserve=ownership ./* /usr/share/icons/elementary-xfce-dark
-            sudo cp --recursive --no-preserve=ownership ./* /usr/share/icons/elementary-xfce-darker
-            sudo cp --recursive --no-preserve=ownership ./* /usr/share/icons/elementary-xfce-darkest
-            printf "Icons were added to the icon theme elementary-xfce\n"
-            printf "Updating icon cache for 'elementary-xfce'\n"
-            sudo touch /usr/share/icons/elementary-xfce /usr/share/icons/elementary-xfce-dark \
-                /usr/share/icons/elementary-xfce-darker /usr/share/icons/elementary-xfce-darkest
-            sudo update-icon-caches /usr/share/icons/elementary-xfce \
-                /usr/share/icons/elementary-xfce-dark /usr/share/icons/elementary-xfce-darker \
-                /usr/share/icons/elementary-xfce-darkest
-        )
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-dark -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darker -i assets/icons
+        ./install_icons.sh -t /usr/share/icons/elementary-xfce-darkest -i assets/icons
         ICON_THEME_INSTALLED=true
     fi
     if "${ICON_THEME_INSTALLED}"; then
         printf "Icon installation complete\n"
     else
-        # If the user has neither of the two themes above at all (which is unlikely given how
-        # common `hicolor` is), this script can be changed to support another icon theme.
+        # If the user has neither of the two themes above at all (which
+        # is unlikely given how common `hicolor` is), this script can
+        # be changed to support another icon theme.
         printf "[WARNING] No icons were installed!\n"
     fi
 fi
