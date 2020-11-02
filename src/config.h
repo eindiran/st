@@ -99,14 +99,16 @@ static int bellvolume = 0;
  * Default $TERM value:
  * st will set this environment variable to whatever
  * value is set below.
+ *
+ * `termname` is externed in st.c
  */
-// Change termname for OpenBSD
 #if __OpenBSD__
-    static char *termname = "st-git-256color";
+    // Change termname for OpenBSD
+    char *termname = "st-git-256color";
 #elif __linux__
-    static char *termname = "st-256color";
+    char *termname = "st-256color";
 #else
-    static char *termname = "st-256color";
+    char *termname = "st-256color";
 #endif
 
 /*
