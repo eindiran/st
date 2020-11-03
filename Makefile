@@ -62,10 +62,12 @@ install_linux: st
 	@echo "Installing using Linux flags"
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f st $(DESTDIR)$(PREFIX)/bin
-	cp -f st-copyout $(DESTDIR)$(PREFIX)/bin
-	cp -f st-urlhandler $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-copyout $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-copyurl $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-urlhandler $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-copyout
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-copyurl
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-urlhandler
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < st.1 > $(DESTDIR)$(MANPREFIX)/man1/st.1
@@ -78,10 +80,12 @@ install_openbsd: st
 	@echo "Installing using OpenBSD flags"
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f st $(DESTDIR)$(PREFIX)/bin
-	cp -f st-copyout $(DESTDIR)$(PREFIX)/bin
-	cp -f st-urlhandler $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-copyout $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-copyurl $(DESTDIR)$(PREFIX)/bin
+	cp -f handlers/st-urlhandler $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-copyout
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-copyurl
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-urlhandler
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < st.1 > $(DESTDIR)$(MANPREFIX)/man1/st.1
@@ -95,6 +99,7 @@ uninstall:
 	@echo "Uninstalling st."
 	rm -f $(DESTDIR)$(PREFIX)/bin/st
 	rm -f $(DESTDIR)$(PREFIX)/bin/st-copyout
+	rm -f $(DESTDIR)$(PREFIX)/bin/st-copyurl
 	rm -f $(DESTDIR)$(PREFIX)/bin/st-urlhandler
 	rm -f $(DESTDIR)$(MANPREFIX)/man1/st.1
 	@echo "Uninstallation complete!"
