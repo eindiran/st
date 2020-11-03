@@ -255,8 +255,19 @@ static MouseShortcut mshortcuts[] = {
     { Button5,              XK_NO_MOD,      "\005" },
 };
 
-/* Internal keyboard shortcuts. */
-#define MODKEY Mod1Mask
+/**
+ * Internal keyboard shortcuts. The corresponding key
+ * will depend on a few thing, so run `xmodmap -pm` to
+ * determine what your mapping is.
+ *
+ * Mod1Mask --> Alt_L, Alt_R, Meta_L
+ * Mod2Mask --> Num_Lock
+ * Mod3Mask -->
+ * Mod4Mask --> Super_L, Super_R (Windows Key)
+ *
+ * These can be edited in ~/.Xmodmap
+ */
+#define MODKEY Mod4Mask
 #define TERMMOD (Mod1Mask|ShiftMask)
 
 MouseKey mkeys[] = {
